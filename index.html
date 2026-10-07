@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Íslenski Körfuboltaleikurinn</title>
+
+  <style>
+    :root {
+      --bg: #07090d;
+      --panel: #11151c;
+      --panel2: #171c25;
+      --line: #293140;
+      --text: #f5f7fa;
+      --muted: #9aa4b2;
+      --accent: #f4b942;
+      --good: #49d17d;
+      --danger: #ff5f66;
+      --blue: #5ca8ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #182130 0%, #0b0e14 32%, #07090d 70%);
+      color: var(--text);
+      font-family: Inter, Arial, Helvetica, sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .app {
+      width: min(1400px, 94%);
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .season-badge {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    .screen {
+      animation: appear 0.25s ease;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      min-height: 72vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(44px, 8vw, 92px);
+      line-height: 0.92;
+      margin: 0;
+      max-width: 1000px;
+      letter-spacing: -0.055em;
+    }
+
+    .hero h1 span {
+      color: var(--accent);
+    }
+
+    .hero p {
+      max-width: 650px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 28px 0;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 22px;
+      font-weight: 800;
+      transition: 0.18s ease;
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: #111;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .secondary-btn {
+      background: var(--panel2);
+      color: white;
+      border: 1px solid var(--line);
+    }
+
+    .danger-btn {
+      background: rgba(255,95,102,0.12);
+      color: var(--danger);
+      border: 1px solid rgba(255,95,102,0.35);
+    }
+
+    .setup-box {
+      max-width: 620px;
+      margin: 100px auto;
+      background: rgba(17,21,28,0.95);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 34px;
+    }
+
+    .setup-box h2 {
+      font-size: 34px;
+      margin-top: 0;
+    }
+
+    .setup-box p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .setup-box input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #090c11;
+      color: white;
+      outline: none;
+      margin: 12px 0 18px;
+    }
+
+    .setup-box input:focus {
+      border-color: var(--accent);
+    }
+
+    .draft-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .draft-header h2 {
+      font-size: 42px;
+      margin: 0 0 6px;
+    }
+
+    .draft-header p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .slot-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 28px;
+    }
+
+    .slot {
+      min-width: 76px;
+      text-align: center;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 10px;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .slot.used {
+      color: #07110a;
+      background: var(--good);
+      border-color: var(--good);
+      font-weight: 900;
+    }
+
+    .pack-team {
+      margin-bottom: 18px;
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .pack-team strong {
+      color: var(--accent);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .player-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 440px;
+      background:
+        linear-gradient(145deg, rgba(244,185,66,0.16), transparent 35%),
+        linear-gradient(180deg, #1b2230, #10141b);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      transition: 0.18s ease;
+    }
+
+    .player-card.selectable:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    }
+
+    .player-card.disabled {
+      opacity: 0.35;
+      filter: grayscale(0.7);
+    }
+
+    .rank {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      background: var(--accent);
+      color: #111;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .ovr {
+      font-size: 48px;
+      font-weight: 950;
+      line-height: 1;
+      margin-top: 10px;
+    }
+
+    .ovr-label {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+    }
+
+    .player-name {
+      font-size: 22px;
+      font-weight: 900;
+      margin: 18px 0 4px;
+      min-height: 52px;
+    }
+
+    .player-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .main-ratings {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .rating-box {
+      background: rgba(255,255,255,0.045);
+      border-radius: 9px;
+      padding: 8px;
+    }
+
+    .rating-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .rating-box strong {
+      font-size: 18px;
+    }
+
+    .subratings {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px 10px;
+      font-size: 12px;
+      margin-top: auto;
+    }
+
+    .subratings div {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 4px 0;
+    }
+
+    .pick-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 11px;
+      border: 0;
+      border-radius: 9px;
+      background: white;
+      color: #111;
+      font-weight: 900;
+    }
+
+    .pick-btn:hover {
+      background: var(--accent);
+    }
+
+    .pick-btn:disabled {
+      cursor: not-allowed;
+      background: #333;
+      color: #777;
+    }
+
+    .notice {
+      margin: 18px 0;
+      padding: 13px 15px;
+      background: rgba(92,168,255,0.08);
+      border: 1px solid rgba(92,168,255,0.25);
+      border-radius: 10px;
+      color: #bddcff;
+    }
+
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .roster-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    .roster-card .small-ovr {
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 950;
+    }
+
+    .roster-card h4 {
+      margin: 8px 0 4px;
+    }
+
+    .roster-card p {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .section-title {
+      margin: 35px 0 14px;
+      font-size: 25px;
+    }
+
+    .team-summary {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    .summary-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    .summary-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .summary-box strong {
+      font-size: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .cards,
+      .roster-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .cards,
+      .roster-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .draft-header {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">ÍSLENSKI KÖRFUBOLTALEIKURINN</div>
+    <div class="season-badge">2023–24 • V0.1</div>
+  </div>
+
+  <!-- START -->
+  <section id="startScreen" class="screen hero">
+    <h1>BYGGÐU ÞITT <span>EIGIÐ LIÐ</span></h1>
+    <p>
+      Draftaðu leikmönnum úr íslenska körfuboltanum,
+      byggðu 13 manna lið og undirbúðu þig fyrir þriggja ára run.
+    </p>
+
+    <button class="primary-btn" onclick="showSetup()">
+      START CAREER
+    </button>
+
+    <button
+      id="continueButton"
+      class="secondary-btn hidden"
+      style="margin-top:12px"
+      onclick="continueCareer()"
+    >
+      CONTINUE CAREER
+    </button>
+  </section>
+
+  <!-- TEAM SETUP -->
+  <section id="setupScreen" class="screen hidden">
+    <div class="setup-box">
+      <h2>Stofnaðu liðið þitt</h2>
+      <p>
+        Þetta verður fantasy-liðið þitt fyrir 2023–24 tímabilið.
+        Þú færð fimm starter packs og síðan einn bench pack.
+      </p>
+
+      <input
+        id="teamNameInput"
+        type="text"
+        maxlength="28"
+        placeholder="Liðsheiti..."
+      />
+
+      <button class="primary-btn" onclick="createTeam()">
+        BYRJA DRAFT
+      </button>
+    </div>
+  </section>
+
+  <!-- DRAFT -->
+  <section id="draftScreen" class="screen hidden">
+
+    <div class="draft-header">
+      <div>
+        <h2 id="draftTitle">Starter Pack 1/5</h2>
+        <p id="draftSubtitle">
+          Veldu einn leikmann. Rank-slotið hans lokast eftir valið.
+        </p>
+      </div>
+
+      <div class="season-badge" id="teamNameBadge"></div>
+    </div>
+
+    <div class="slot-row" id="slotRow"></div>
+
+    <div class="notice" id="draftNotice">
+      Þú mátt aðeins velja einn bandarískan leikmann í starting five.
+    </div>
+
+    <div class="pack-team" id="packTeam"></div>
+
+    <div class="cards" id="draftCards"></div>
+
+  </section>
+
+  <!-- BENCH PACK -->
+  <section id="benchScreen" class="screen hidden">
+
+    <div class="draft-header">
+      <div>
+        <h2>BENCH PACK</h2>
+        <p>
+          Eitt random lið. Þú færð átta leikmenn sjálfkrafa.
+        </p>
+      </div>
+
+      <div class="season-badge" id="benchTeamBadge"></div>
+    </div>
+
+    <div class="notice">
+      Starter/bench segir aðeins hvernig þú fékkst leikmanninn.
+      Þú getur breytt lineup seinna.
+    </div>
+
+    <div id="benchPreview" class="roster-grid"></div>
+
+    <button
+      class="primary-btn"
+      style="margin-top:24px"
+      onclick="acceptBench()"
+    >
+      TAKA VIÐ BENCH PACK
+    </button>
+
+  </section>
+
+  <!-- MY TEAM -->
+  <section id="teamScreen" class="screen hidden">
+
+    <div class="draft-header">
+      <div>
+        <h2 id="finalTeamName">MY TEAM</h2>
+        <p>2023–24 roster • 13 leikmenn</p>
+      </div>
+
+      <button class="danger-btn" onclick="resetCareer()">
+        NEW CAREER
+      </button>
+    </div>
+
+    <div class="team-summary" id="teamSummary"></div>
+
+    <h3 class="section-title">STARTER PICKS</h3>
+    <div id="starterRoster" class="roster-grid"></div>
+
+    <h3 class="section-title">BENCH</h3>
+    <div id="benchRoster" class="roster-grid"></div>
+
+    <div class="notice" style="margin-top:30px">
+      V0.1 COMPLETE — næsta build: lineup, tactics, schedule og game simulation.
+    </div>
+
+  </section>
+
+</div>
+
+<script>
+
+/* =========================================================
+   2023–24 PLAYER DATABASE
+   ========================================================= */
+
+const teams = [
+
+{
+  name: "Valur",
+  players: [
+    P("Kristinn Pálsson",93,94,89,88,84,94,82,85,84,78,88,"IS"),
+    P("Kristófer Acox",90,87,94,96,68,47,78,95,82,85,67,"IS"),
+    P("Joshua Jefferson",89,94,79,88,87,87,91,69,94,46,95,"US"),
+    P("Taiwo Badmus",85,87,85,90,78,79,72,89,79,81,74,"IE"),
+    P("Ástþór Atli Svalason",82,84,78,72,76,92,83,65,75,43,81,"IS"),
+    P("Hjálmar Stefánsson",80,74,89,78,67,68,70,82,82,89,72,"IS"),
+    P("Frank Aron Booker",78,81,73,73,76,85,78,62,72,42,83,"IS"),
+    P("Antonio Monteiro",77,76,80,79,68,72,69,81,76,77,70,"PT"),
+    P("Justas Tamulis",75,81,67,68,76,87,68,62,65,44,85,"LT"),
+    P("Benedikt Blöndal",71,70,73,69,66,71,72,66,72,46,73,"IS")
+  ]
+},
+
+{
+  name: "Grindavík",
+  players: [
+    P("Dedrick Basile",91,95,84,87,88,88,95,69,96,42,88,"US"),
+    P("DeAndre Kane",88,88,89,91,79,72,88,88,87,66,72,"US"),
+    P("Ólafur Ólafsson",85,82,91,86,74,79,72,86,91,68,76,"IS"),
+    P("Daniel Mortensen",84,84,85,83,75,86,69,88,73,78,82,"DK"),
+    P("Kristófer Breki Gylfason",80,80,81,77,74,82,75,76,79,61,80,"IS"),
+    P("Valur Orri Valsson",79,79,80,71,75,81,86,63,80,41,82,"IS"),
+    P("Julio de Assis",78,76,84,82,67,69,64,86,73,87,70,"BR"),
+    P("Arnór Tristan Helgason",73,72,76,72,68,73,71,72,74,58,73,"IS"),
+    P("Matija Jokic",70,70,72,74,65,67,62,76,66,67,69,"HR"),
+    P("Magnús Engill Valgeirsson",67,67,68,65,64,69,66,64,67,45,70,"IS")
+  ]
+},
+
+{
+  name: "Keflavík",
+  players: [
+    P("Remy Martin",94,98,83,92,94,93,94,71,90,38,91,"US"),
+    P("Sigurður Pétursson",90,84,97,84,78,82,87,82,96,81,82,"IS"),
+    P("Urban Oman",86,85,89,88,76,82,71,85,82,90,76,"SI"),
+    P("Marek Dolezaj",85,83,88,88,74,70,82,90,79,82,75,"SK"),
+    P("Jaka Brodnik",83,86,78,81,82,87,75,74,76,55,85,"SI"),
+    P("Igor Maric",82,84,80,78,79,88,76,71,82,53,85,"HR"),
+    P("Halldór Garðar Hermannsson",79,78,81,73,74,80,84,66,82,45,80,"IS"),
+    P("Danero Thomas",77,76,80,78,72,74,70,81,77,70,76,"CA"),
+    P("Nikola Orelj",68,69,68,68,66,71,66,65,67,45,72,"RS"),
+    P("Frosti Sigurðsson",65,64,68,66,61,64,63,67,68,52,68,"IS")
+  ]
+},
+
+{
+  name: "Njarðvík",
+  players: [
+    P("Chaz Williams",91,94,86,86,86,82,97,68,97,42,84,"US"),
+    P("Dwayne Lautier-Ogunleye",88,93,82,88,84,94,84,77,81,46,84,"GB"),
+    P("Dominykas Milka",87,86,88,91,76,72,73,94,71,75,90,"LT"),
+    P("Mario Matasovic",85,82,90,88,72,81,69,87,86,91,63,"HR"),
+    P("Maciej Baginski",79,81,77,71,75,84,73,67,76,45,81,"IS"),
+    P("Elías Bjarki Pálsson",77,76,80,75,72,69,72,72,80,57,77,"IS"),
+    P("Þorvaldur Orri Árnason",76,73,82,76,68,71,68,79,79,70,72,"IS"),
+    P("Steven Moyer",75,78,71,75,76,79,73,68,70,48,80,"US"),
+    P("Veigar Páll Alexandersson",72,73,71,67,70,76,77,58,72,38,78,"IS"),
+    P("Carlos Mateo",70,69,73,72,65,68,65,75,70,67,70,"ES")
+  ]
+},
+
+{
+  name: "Tindastóll",
+  players: [
+    P("Þórir Guðmundur Þorbjarnarson",93,91,89,86,84,89,88,85,87,66,86,"IS"),
+    P("Callum Lawson",87,90,81,86,83,89,80,80,78,61,87,"GB"),
+    P("Adomas Drungilas",84,83,87,90,72,76,72,90,75,84,76,"LT"),
+    P("Davis Geks",82,86,74,68,80,92,77,57,72,37,88,"LV"),
+    P("Pétur Rúnar Birgisson",81,81,82,72,77,82,88,67,82,42,85,"IS"),
+    P("Ragnar Ágústsson",77,75,81,77,69,74,68,80,77,73,73,"IS"),
+    P("Sigtryggur Arnar Björnsson",76,78,74,69,73,82,76,60,72,38,81,"IS"),
+    P("Orri Svavarsson",73,72,77,76,66,69,64,79,73,70,70,"IS"),
+    P("Antonio Woods",72,74,70,72,72,75,76,60,70,37,76,"US"),
+    P("Jacob Calloway",71,74,67,72,70,78,67,65,66,45,77,"US")
+  ]
+},
+
+{
+  name: "Álftanes",
+  players: [
+    P("Douglas Wilson",89,89,91,99,76,69,72,93,79,94,75,"US"),
+    P("Haukur Helgi Pálsson",88,86,92,85,81,83,81,89,91,68,84,"IS"),
+    P("Dúi Þór Jónsson",84,84,81,76,79,84,90,67,81,42,85,"IS"),
+    P("Hörður Axel Vilhjálmsson",83,79,90,71,76,80,91,69,87,48,82,"IS"),
+    P("Cedrick Bowen",81,82,81,88,72,72,67,85,75,79,76,"US"),
+    P("Dino Stipcic",80,81,79,76,75,83,84,72,77,53,80,"HR"),
+    P("Eysteinn Bjarni Ævarsson",75,73,79,72,68,74,69,76,78,62,73,"IS"),
+    P("Daniel Love",75,78,72,75,74,78,75,68,76,52,80,"US"),
+    P("Norbertas Giga",74,72,79,79,65,67,62,82,68,76,67,"LT"),
+    P("Arnar Björnsson",68,68,70,67,65,69,67,68,69,51,70,"IS")
+  ]
+},
+
+{
+  name: "Stjarnan",
+  players: [
+    P("Ægir Þór Steinarsson",93,91,84,82,82,82,96,70,91,40,86,"IS"),
+    P("Antti Kanervo",84,89,72,67,78,94,74,58,68,45,91,"FI"),
+    P("James Ellisor",83,85,78,88,82,68,72,75,79,60,72,"US"),
+    P("Kevin Kone",82,78,87,91,52,30,48,94,54,87,58,"US"),
+    P("Hlynur Bæringsson",80,76,85,77,69,77,78,87,70,89,82,"IS"),
+    P("Júlíus Orri Ágústsson",78,80,73,75,75,81,79,62,69,43,80,"IS"),
+    P("Tómas Þórður Hilmarsson",75,73,78,78,66,67,65,81,65,72,72,"IS"),
+    P("Arnþór Freyr Guðmundsson",73,75,69,66,72,81,69,59,66,40,79,"IS"),
+    P("Kristján Fannar Ingólfsson",69,68,70,67,65,69,67,66,68,52,71,"IS"),
+    P("Dagur Kár Jónsson",64,65,61,60,64,67,69,53,62,38,70,"IS")
+  ]
+},
+
+{
+  name: "Þór Þorlákshöfn",
+  players: [
+    P("Tómas Valur Þrastarson",92,91,88,90,83,86,82,84,84,78,84,"IS"),
+    P("Jordan Semple",89,85,95,92,72,70,75,96,94,96,69,"US"),
+    P("Nigel Pruitt",87,92,76,85,87,90,77,75,75,54,88,"US"),
+    P("Darwin Davis Jr.",86,88,81,82,83,84,92,65,84,40,88,"US"),
+    P("Fotios Lampropoulos",81,80,83,85,73,74,69,86,72,77,78,"GR"),
+    P("Davíð Arnar Ágústsson",78,78,80,73,73,81,76,71,78,53,79,"IS"),
+    P("Ragnar Örn Bragason",75,76,75,70,72,80,73,65,73,44,78,"IS"),
+    P("Emil Karel Einarsson",74,73,77,75,67,72,67,78,74,65,72,"IS"),
+    P("Jose Medina Aldana",73,75,70,73,71,77,76,62,69,42,76,"ES"),
+    P("Benjamín Þorri Benjamínsson",64,63,66,65,60,64,62,66,65,52,67,"IS")
+  ]
+},
+
+{
+  name: "Höttur",
+  players: [
+    P("Deontaye Buskey",87,91,80,84,85,87,89,68,85,48,88,"US"),
+    P("Nemanja Knezevic",86,82,92,91,68,58,68,96,74,91,68,"ME"),
+    P("Obadiah Trotter",84,82,91,79,75,80,83,72,94,53,80,"US"),
+    P("Gustav Suhr-Jessen",81,81,82,83,74,78,73,81,80,68,80,"DK"),
+    P("Adam Eiður Ásgeirsson",79,80,78,75,74,83,79,66,77,43,82,"IS"),
+    P("Matej Karlovic",77,79,74,73,74,83,71,68,72,52,81,"HR"),
+    P("David Guardia Ramos",76,75,79,74,69,75,77,70,78,58,75,"ES"),
+    P("Gísli Þórarinn Hallsson",75,73,80,77,67,72,69,78,78,69,72,"IS"),
+    P("Sæþór Elmar Kristjánsson",71,70,74,72,65,70,67,73,72,59,70,"IS"),
+    P("Óliver Árni Ólafsson",65,64,68,66,61,65,63,67,67,53,67,"IS")
+  ]
+},
+
+{
+  name: "Haukar",
+  players: [
+    P("David Okeke",88,86,92,94,72,67,66,95,77,92,73,"IT"),
+    P("Osku Heinonen",84,88,76,78,82,90,80,67,75,44,87,"FI"),
+    P("De'Sean Parsons",81,83,79,86,78,73,78,82,78,68,76,"US"),
+    P("Daði Lár Jónsson",76,78,72,70,75,80,82,60,72,38,80,"IS"),
+    P("Sigvaldi Eggertsson",75,73,79,75,68,72,68,78,78,67,72,"IS"),
+    P("Hilmir Arnarson",73,74,72,68,70,77,76,60,72,40,76,"IS"),
+    P("Everage Richardson",72,75,68,74,73,73,77,62,69,39,75,"US"),
+    P("Hugi Hallgrímsson",70,69,73,70,65,69,67,72,72,57,70,"IS"),
+    P("Ólafur Aron Ingvason",68,68,70,67,65,69,68,66,69,48,70,"IS"),
+    P("Brynjar Þór Björnsson",67,69,66,64,68,72,71,58,66,35,74,"IS")
+  ]
+},
+
+{
+  name: "Breiðablik",
+  players: [
+    P("Keith Jordan Jr.",87,91,81,92,84,78,82,91,85,86,80,"US"),
+    P("Zoran Vrkic",82,86,73,80,83,86,76,72,71,51,86,"HR"),
+    P("Árni Elmar Hrafnsson",78,78,79,73,74,79,85,66,79,42,80,"IS"),
+    P("Snorri Vignisson",76,73,82,78,68,70,68,82,80,72,72,"IS"),
+    P("Sölvi Ólason",75,77,72,70,73,80,75,62,71,42,79,"IS"),
+    P("Karl Ísak Birgisson",73,72,76,74,67,71,68,76,74,62,71,"IS"),
+    P("Guillermo Daza",72,74,69,72,71,75,76,60,69,39,76,"ES"),
+    P("Veigar Elí Grétarsson",70,69,73,70,65,69,66,72,72,56,69,"IS"),
+    P("Ólafur Snær Eyjólfsson",68,67,71,68,63,67,65,70,70,54,68,"IS"),
+    P("Arnar Freyr Jónsson",66,66,68,65,63,67,66,64,67,44,69,"IS")
+  ]
+},
+
+{
+  name: "Hamar",
+  players: [
+    P("Franck-David Nana",87,92,77,89,85,83,88,76,88,52,84,"FR"),
+    P("Ragnar Nathanaelsson",84,77,92,88,61,38,59,95,67,95,62,"IS"),
+    P("Björn Ásgeir Ásgeirsson",78,79,77,76,74,81,78,70,76,48,80,"IS"),
+    P("Dragos Diculescu",78,82,72,77,78,83,75,68,71,47,82,"RO"),
+    P("Aurimas Urbonas",76,78,73,73,74,80,79,64,72,41,79,"LT"),
+    P("Maurice Creek",74,79,67,73,76,82,72,62,66,41,81,"US"),
+    P("Daníel Sigmar Kristjánsson",70,68,74,70,64,68,65,74,72,60,69,"IS"),
+    P("Jose Medina Aldana",70,73,67,71,70,74,74,59,67,39,75,"ES"),
+    P("Jalen Moore",69,72,66,73,68,70,72,64,66,45,72,"US"),
+    P("Bjarni Þór Bjarnason",66,65,69,67,62,65,64,69,68,53,67,"IS")
+  ]
+}
+
+];
+
+
+/* =========================================================
+   PLAYER CREATOR
+   ========================================================= */
+
+function P(name,ovr,off,def,ins,mid,three,pm,reb,stl,blk,ft,nation) {
+  return {
+    id: name.toLowerCase().replace(/[^a-záðéíóúýþæö0-9]+/gi,"-"),
+    name,
+    ovr,
+    off,
+    def,
+    ins,
+    mid,
+    three,
+    pm,
+    reb,
+    stl,
+    blk,
+    ft,
+    nation
+  };
+}
+
+
+/* =========================================================
+   GAME STATE
+   ========================================================= */
+
+let game = {
+  teamName: "",
+  starterPicks: [],
+  usedRanks: [],
+  starterPackNumber: 1,
+  americanStarterUsed: false,
+  currentPackTeam: null,
+  currentPackPlayers: [],
+  benchTeam: null,
+  benchPlayers: [],
+  completed: false
+};
+
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+function randomItem(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function hideAllScreens() {
+  document.querySelectorAll(".screen").forEach(el => {
+    el.classList.add("hidden");
+  });
+}
+
+function showScreen(id) {
+  hideAllScreens();
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function saveGame() {
+  localStorage.setItem("islBasketballCareer", JSON.stringify(game));
+}
+
+function loadGame() {
+  const saved = localStorage.getItem("islBasketballCareer");
+
+  if (!saved) return false;
+
+  try {
+    game = JSON.parse(saved);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+
+/* =========================================================
+   START / SETUP
+   ========================================================= */
+
+function showSetup() {
+  showScreen("setupScreen");
+}
+
+function createTeam() {
+
+  const name =
+    document.getElementById("teamNameInput").value.trim();
+
+  if (!name) {
+    alert("Skrifaðu liðsheiti fyrst.");
+    return;
+  }
+
+  game = {
+    teamName: name,
+    starterPicks: [],
+    usedRanks: [],
+    starterPackNumber: 1,
+    americanStarterUsed: false,
+    currentPackTeam: null,
+    currentPackPlayers: [],
+    benchTeam: null,
+    benchPlayers: [],
+    completed: false
+  };
+
+  saveGame();
+
+  generateStarterPack();
+
+  showScreen("draftScreen");
+}
+
+
+/* =========================================================
+   STARTER PACK LOGIC
+   ========================================================= */
+
+function getAvailableRanks() {
+  return [1,2,3,4,5].filter(rank => !game.usedRanks.includes(rank));
+}
+
+function rankedTopFive(team) {
+
+  const sorted =
+    [...team.players]
+      .sort((a,b) => b.ovr - a.ovr)
+      .slice(0,5);
+
+  return sorted.map((player,index) => ({
+    ...player,
+    rank: index + 1,
+    originalTeam: team.name
+  }));
+}
+
+function teamCreatesLegalPack(team) {
+
+  const ranked = rankedTopFive(team);
+  const availableRanks = getAvailableRanks();
+
+  const legalPlayers =
+    ranked.filter(player => {
+
+      if (!availableRanks.includes(player.rank)) {
+        return false;
+      }
+
+      if (
+        game.americanStarterUsed &&
+        player.nation === "US"
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+  return legalPlayers.length > 0;
+}
+
+function generateStarterPack() {
+
+  const possibleTeams =
+    teams.filter(team => teamCreatesLegalPack(team));
+
+  if (!possibleTeams.length) {
+    alert("Draft engine fann ekkert löglegt lið. Endurræstu career.");
+    return;
+  }
+
+  const team = randomItem(possibleTeams);
+
+  game.currentPackTeam = team.name;
+  game.currentPackPlayers = rankedTopFive(team);
+
+  saveGame();
+
+  renderDraft();
+}
+
+function renderDraft() {
+
+  document.getElementById("draftTitle").textContent =
+    `Starter Pack ${game.starterPackNumber}/5`;
+
+  document.getElementById("teamNameBadge").textContent =
+    game.teamName;
+
+  document.getElementById("packTeam").innerHTML =
+    `PACK TEAM: <strong>${game.currentPackTeam}</strong>`;
+
+  renderSlots();
+
+  const container =
+    document.getElementById("draftCards");
+
+  container.innerHTML = "";
+
+  const availableRanks = getAvailableRanks();
+
+  game.currentPackPlayers.forEach(player => {
+
+    const rankUsed =
+      !availableRanks.includes(player.rank);
+
+    const americanBlocked =
+      game.americanStarterUsed &&
+      player.nation === "US";
+
+    const legal =
+      !rankUsed &&
+      !americanBlocked;
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      `player-card ${legal ? "selectable" : "disabled"}`;
+
+    card.innerHTML = playerCardHTML(
+      player,
+      true,
+      legal
+    );
+
+    container.appendChild(card);
+  });
+}
+
+function renderSlots() {
+
+  const row =
+    document.getElementById("slotRow");
+
+  row.innerHTML = "";
+
+  [1,2,3,4,5].forEach(rank => {
+
+    const div =
+      document.createElement("div");
+
+    const used =
+      game.usedRanks.includes(rank);
+
+    div.className =
+      `slot ${used ? "used" : ""}`;
+
+    div.textContent =
+      used ? `#${rank} ✓` : `#${rank} OPEN`;
+
+    row.appendChild(div);
+  });
+}
+
+function pickStarter(playerId) {
+
+  const player =
+    game.currentPackPlayers.find(
+      p => p.id === playerId
+    );
+
+  if (!player) return;
+
+  if (game.usedRanks.includes(player.rank)) {
+    return;
+  }
+
+  if (
+    game.americanStarterUsed &&
+    player.nation === "US"
+  ) {
+    alert("Þú ert nú þegar með bandarískan starter.");
+    return;
+  }
+
+  game.starterPicks.push(player);
+  game.usedRanks.push(player.rank);
+
+  if (player.nation === "US") {
+    game.americanStarterUsed = true;
+  }
+
+  if (game.starterPackNumber >= 5) {
+
+    saveGame();
+
+    generateBenchPack();
+
+    showScreen("benchScreen");
+
+    return;
+  }
+
+  game.starterPackNumber++;
+
+  generateStarterPack();
+}
+
+
+/* =========================================================
+   BENCH PACK
+   ========================================================= */
+
+function generateBenchPack() {
+
+  const team = randomItem(teams);
+
+  game.benchTeam = team.name;
+
+  /*
+     Bench pack = 8 players.
+     For V0.1 we take players #3–#10 by OVR.
+     This avoids automatically giving another team's
+     two biggest stars as bench players.
+  */
+
+  const sorted =
+    [...team.players]
+      .sort((a,b) => b.ovr - a.ovr);
+
+  game.benchPlayers =
+    sorted.slice(2,10).map(player => ({
+      ...player,
+      originalTeam: team.name
+    }));
+
+  document.getElementById("benchTeamBadge").textContent =
+    team.name;
+
+  renderBenchPreview();
+
+  saveGame();
+}
+
+function renderBenchPreview() {
+
+  const container =
+    document.getElementById("benchPreview");
+
+  container.innerHTML = "";
+
+  game.benchPlayers.forEach(player => {
+    container.innerHTML += rosterCardHTML(player);
+  });
+}
+
+function acceptBench() {
+
+  game.completed = true;
+
+  saveGame();
+
+  renderMyTeam();
+
+  showScreen("teamScreen");
+}
+
+
+/* =========================================================
+   MY TEAM
+   ========================================================= */
+
+function renderMyTeam() {
+
+  document.getElementById("finalTeamName").textContent =
+    game.teamName.toUpperCase();
+
+  const starters =
+    document.getElementById("starterRoster");
+
+  const bench =
+    document.getElementById("benchRoster");
+
+  starters.innerHTML = "";
+  bench.innerHTML = "";
+
+  game.starterPicks
+    .sort((a,b) => a.rank - b.rank)
+    .forEach(player => {
+      starters.innerHTML += rosterCardHTML(player);
+    });
+
+  game.benchPlayers.forEach(player => {
+    bench.innerHTML += rosterCardHTML(player);
+  });
+
+  const fullRoster = [
+    ...game.starterPicks,
+    ...game.benchPlayers
+  ];
+
+  const avg =
+    fullRoster.reduce((sum,p) => sum + p.ovr,0)
+    / fullRoster.length;
+
+  const offense =
+    fullRoster.reduce((sum,p) => sum + p.off,0)
+    / fullRoster.length;
+
+  const defense =
+    fullRoster.reduce((sum,p) => sum + p.def,0)
+    / fullRoster.length;
+
+  document.getElementById("teamSummary").innerHTML = `
+    <div class="summary-box">
+      <span>TEAM OVR</span>
+      <strong>${avg.toFixed(1)}</strong>
+    </div>
+
+    <div class="summary-box">
+      <span>OFFENSE</span>
+      <strong>${offense.toFixed(1)}</strong>
+    </div>
+
+    <div class="summary-box">
+      <span>DEFENSE</span>
+      <strong>${defense.toFixed(1)}</strong>
+    </div>
+
+    <div class="summary-box">
+      <span>USA STARTERS</span>
+      <strong>${game.starterPicks.filter(p => p.nation === "US").length}</strong>
+    </div>
+
+    <div class="summary-box">
+      <span>BENCH PACK</span>
+      <strong>${game.benchTeam}</strong>
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   CARD HTML
+   ========================================================= */
+
+function playerCardHTML(player, draftMode, legal) {
+
+  return `
+    ${draftMode ? `<div class="rank">#${player.rank}</div>` : ""}
+
+    <div class="ovr">${player.ovr}</div>
+    <div class="ovr-label">OVERALL</div>
+
+    <div class="player-name">
+      ${player.name}
+    </div>
+
+    <div class="player-meta">
+      ${player.originalTeam || ""} • ${player.nation}
+    </div>
+
+    <div class="main-ratings">
+
+      <div class="rating-box">
+        <span>OFF</span>
+        <strong>${player.off}</strong>
+      </div>
+
+      <div class="rating-box">
+        <span>DEF</span>
+        <strong>${player.def}</strong>
+      </div>
+
+    </div>
+
+    <div class="subratings">
+      <div><span>INS</span><strong>${player.ins}</strong></div>
+      <div><span>MID</span><strong>${player.mid}</strong></div>
+      <div><span>3PT</span><strong>${player.three}</strong></div>
+      <div><span>PM</span><strong>${player.pm}</strong></div>
+      <div><span>REB</span><strong>${player.reb}</strong></div>
+      <div><span>STL</span><strong>${player.stl}</strong></div>
+      <div><span>BLK</span><strong>${player.blk}</strong></div>
+      <div><span>FT</span><strong>${player.ft}</strong></div>
+    </div>
+
+    ${
+      draftMode
+        ? `
+          <button
+            class="pick-btn"
+            ${legal ? "" : "disabled"}
+            onclick="pickStarter('${player.id}')"
+          >
+            ${legal ? "DRAFTA" : "LÆST"}
+          </button>
+        `
+        : ""
+    }
+  `;
+}
+
+function rosterCardHTML(player) {
+
+  return `
+    <div class="roster-card">
+
+      <div class="small-ovr">
+        ${player.ovr}
+      </div>
+
+      <h4>${player.name}</h4>
+
+      <p>
+        ${player.originalTeam || ""}
+        • ${player.nation}
+      </p>
+
+      <p style="margin-top:8px">
+        OFF ${player.off}
+        • DEF ${player.def}
+        • 3PT ${player.three}
+        • PM ${player.pm}
+        • REB ${player.reb}
+      </p>
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   SAVE / CONTINUE / RESET
+   ========================================================= */
+
+function continueCareer() {
+
+  if (!loadGame()) return;
+
+  if (game.completed) {
+    renderMyTeam();
+    showScreen("teamScreen");
+    return;
+  }
+
+  if (game.benchPlayers.length > 0) {
+    document.getElementById("benchTeamBadge").textContent =
+      game.benchTeam;
+
+    renderBenchPreview();
+
+    showScreen("benchScreen");
+
+    return;
+  }
+
+  renderDraft();
+
+  showScreen("draftScreen");
+}
+
+function resetCareer() {
+
+  const confirmReset =
+    confirm("Ertu viss? Þetta eyðir núverandi career.");
+
+  if (!confirmReset) return;
+
+  localStorage.removeItem("islBasketballCareer");
+
+  location.reload();
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+   ========================================================= */
+
+window.addEventListener("load", () => {
+
+  const saved =
+    localStorage.getItem("islBasketballCareer");
+
+  if (saved) {
+    document
+      .getElementById("continueButton")
+      .classList.remove("hidden");
+  }
+
+});
+
+</script>
+
+</body>
+</html>
